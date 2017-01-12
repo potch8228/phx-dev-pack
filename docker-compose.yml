@@ -1,0 +1,33 @@
+version: '2'
+services:
+    db:
+        image: mysql:latest
+        environment:
+            - MYSQL_ROOT_PASSWORD=docker
+            - MYSQL_DATABASE=web_dev
+        ports:
+            - "3306:3306"
+        volumes: # in order to let this work on macOS; this requires Docker for Mac(not Docker Toolbox) ver 1.12.x up
+            - ./db:/var/lib/mysql
+            - ./db-confs/mysql.conf.d/mysqld.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf
+    web:
+        # image: docker-phoenix:ubuntu
+        # image: docker-phoenix:centos7
+        image: docker-phoenix:alpine
+        build:
+            context: ./
+            # dockerfile: Dockerfile
+            # dockerfile: Dockerfile.centos
+            dockerfile: Dockerfile.alpine
+        ports:
+            - "4000:4000"
+        volumes:
+            - ./webapp:/webapp
+        working_dir: /webapp
+        command: # dev env setting
+            - mix
+              # - do                # in case phoenix needs to be recompiled with nif or some
+              # - deps.clean --all, # L29 - L32 need to be uncommented
+              # - deps.get,
+              # - deps.compile,
+            - phoenix.server

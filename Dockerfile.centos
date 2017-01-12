@@ -1,0 +1,22 @@
+FROM centos:latest
+
+MAINTAINER Tatsuya Kobayashi pikopiko28@gmail.com
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN yum -y install wget unzip epel-release && \
+rpm -ivh https://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm && \
+rpm -ivh http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm && \
+wget https://github.com/elixir-lang/elixir/releases/download/v1.3.4/Precompiled.zip && \
+yum -y groupinstall 'Development Tools' && \
+yum -y install esl-erlang inotify-tools nodejs mysql-community-client && \
+unzip Precompiled.zip -d /usr/local/lib/elixir && \
+rm -f Precompiled.zip && \
+ln -s /usr/local/lib/elixir/bin/elixir /usr/local/sbin/elixir && \
+ln -s /usr/local/lib/elixir/bin/elixirc /usr/local/sbin/elixirc && \
+ln -s /usr/local/lib/elixir/bin/iex /usr/local/sbin/iex && \
+ln -s /usr/local/lib/elixir/bin/mix /usr/local/sbin/mix && \
+mix do local.hex --force, local.rebar --force
+
